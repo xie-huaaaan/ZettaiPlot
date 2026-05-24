@@ -12,6 +12,7 @@ from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 from matplotlib.transforms import Transform
 from PIL import Image
 
+from zettaiplot._pillow import flattened_pixels
 from zettaiplot.textures import SockTextureSpec, render_sock_texture
 from zettaiplot.textures.blend import rgba_tuple
 
@@ -59,7 +60,7 @@ class HandlerTextureSwatch(HandlerBase):
 def make_texture_swatch(spec: SockTextureSpec, width: int = 96, height: int = 34) -> Image.Image:
     """Render a small rectangular texture sample for legends."""
     leg = Image.new("RGBA", (width, height), (253, 234, 228, 255))
-    pixels = list(leg.get_flattened_data())
+    pixels = flattened_pixels(leg)
     shaded: list[tuple[int, int, int, int]] = []
     center = (width - 1) / 2
     half_width = max(center, 1.0)

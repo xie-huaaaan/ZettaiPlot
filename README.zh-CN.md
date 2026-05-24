@@ -23,7 +23,7 @@
 pip install zettaiplot
 ```
 
-**依赖要求：** Python ≥ 3.12 · matplotlib ≥ 3.10 · numpy ≥ 2.4 · Pillow ≥ 12.2
+**依赖要求：** Python ≥ 3.12 · matplotlib ≥ 3.8 · numpy ≥ 1.26 · Pillow ≥ 11.0
 
 ## 快速开始
 

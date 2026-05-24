@@ -26,9 +26,9 @@ classifiers = [
     "Topic :: Multimedia :: Graphics",
 ]
 dependencies = [
-    "matplotlib>=3.10.9",
-    "numpy>=2.4.6",
-    "pillow>=12.2.0",
+    "matplotlib>=3.8.0",
+    "numpy>=1.26.0",
+    "pillow>=11.0.0",
 ]
 
 [project.urls]
@@ -42,6 +42,9 @@ dev = [
     "pytest>=9.0.3",
     "ruff>=0.15.14",
 ]
+
+[tool.uv]
+resolution = "lowest-direct"
 
 [build-system]
 requires = ["setuptools>=80"]

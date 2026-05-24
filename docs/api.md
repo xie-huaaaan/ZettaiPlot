@@ -20,9 +20,9 @@ Runtime requirements:
 | Package | Version |
 | --- | --- |
 | Python | `>=3.12` |
-| Matplotlib | `>=3.10.9` |
-| NumPy | `>=2.4.6` |
-| Pillow | `>=12.2.0` |
+| Matplotlib | `>=3.8.0` |
+| NumPy | `>=1.26.0` |
+| Pillow | `>=11.0.0` |
 
 ---
 

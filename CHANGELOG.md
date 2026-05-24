@@ -7,14 +7,14 @@ ZettaiPlot uses [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.1.1] — 2025-01-XX
+## [0.1.1] — 2026-05-24
 
 ### Added
 - README and API reference documentation (`docs/api.md`).
 
 ---
 
-## [0.1.0] — 2025-01-XX
+## [0.1.0] — 2025-05-24
 
 Initial release.
 

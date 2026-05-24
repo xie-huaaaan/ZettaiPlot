@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from PIL import Image
 
+from zettaiplot._pillow import flattened_pixels
 from zettaiplot.textures.blend import clamp_float
 
 
@@ -25,7 +26,7 @@ def sock_mask_and_profiles(
 ) -> tuple[list[bool], list[RowProfile | None], int]:
     """Return sock coverage mask and per-row alpha profiles."""
     width, height = image.size
-    alpha_values = image.getchannel("A").get_flattened_data()
+    alpha_values = flattened_pixels(image.getchannel("A"))
     coverage = clamp_float(coverage_ratio, 0.0, 1.0)
     covered_height = max(1, round(height * coverage))
     top_y = max(0, height - covered_height)

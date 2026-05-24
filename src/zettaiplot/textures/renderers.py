@@ -7,6 +7,7 @@ from collections.abc import Callable
 
 from PIL import Image
 
+from zettaiplot._pillow import flattened_pixels
 from zettaiplot.textures.blend import (
     alpha_blend,
     clamp_float,
@@ -335,7 +336,7 @@ def apply_pixels(
 ) -> Image.Image:
     """Apply a pixel function over the sock mask."""
     output = image.copy()
-    pixels = [rgba_tuple(pixel) for pixel in output.get_flattened_data()]
+    pixels = [rgba_tuple(pixel) for pixel in flattened_pixels(output)]
     width, height = output.size
 
     for y in range(height):

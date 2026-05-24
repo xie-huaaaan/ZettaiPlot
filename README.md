@@ -23,7 +23,7 @@ Also named "StockingPlot", A Python data visualization library that encodes nume
 pip install zettaiplot
 ```
 
-**Requirements:** Python ≥ 3.12 · matplotlib ≥ 3.10 · numpy ≥ 2.4 · Pillow ≥ 12.2
+**Requirements:** Python ≥ 3.12 · matplotlib ≥ 3.8 · numpy ≥ 1.26 · Pillow ≥ 11.0
 
 ## Quick Start
 

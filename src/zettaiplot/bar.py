@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
@@ -108,13 +109,16 @@ def sockbar(
 
     if ax is None:
         width = max(6.0, (layout.right_x - layout.left_x + 180) / 180)
-        _, ax = plt.subplots(figsize=(width, 5.8))
+        _, created_ax = plt.subplots(figsize=(width, 5.8))
+        ax = cast(Axes, created_ax)
+    assert ax is not None
+    target_ax: Axes = ax
 
     image_artists: list[AxesImage] = []
     for placement in layout.placements:
         spec = texture_for_placement(placement, texture, texture_by_hue)
         artist = draw_sock_leg(
-            ax,
+            target_ax,
             placement.asset,
             x=placement.center_x,
             value=placement.coverage_ratio,
@@ -123,20 +127,20 @@ def sockbar(
         )
         image_artists.append(artist)
 
-    configure_axes(ax, layout)
+    configure_axes(target_ax, layout)
     legend_handles: list[TextureLegendHandle] = []
     legend_labels: list[str] = []
     legend_ncol: int | None = None
     if legend and layout.hue_labels:
         legend_handles, legend_labels, legend_ncol = add_texture_legend(
-            ax,
+            target_ax,
             layout.hue_labels,
             texture_by_hue,
             legend_kwargs,
         )
 
     return SockBarContainer(
-        ax=ax,
+        ax=target_ax,
         image_artists=image_artists,
         asset_ids=[placement.asset.asset_id for placement in layout.placements],
         values=[record.value for record in records],

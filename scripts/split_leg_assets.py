@@ -17,6 +17,8 @@ from statistics import mean
 
 from PIL import Image, ImageDraw, ImageFont
 
+from zettaiplot._pillow import flattened_pixels
+
 
 type BBox = tuple[int, int, int, int]
 
@@ -84,7 +86,7 @@ def alpha_mask(image: Image.Image) -> list[bool]:
     alpha = image.getchannel("A")
     return [
         isinstance(value, int | float) and value > 0
-        for value in alpha.get_flattened_data()
+        for value in flattened_pixels(alpha)
     ]
 
 
