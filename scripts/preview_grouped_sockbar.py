@@ -108,7 +108,7 @@ def render_two_hue_original_pair(output_dir: Path) -> None:
         values.append([0.36 + index * 0.09, 0.68 - index * 0.05])
     render_sockbar_preview(
         output_dir / "two_hue_original_pair_gap.png",
-        title="2 hue items: original source-pair gaps, wider group spacing",
+        title="",
         categories=categories,
         hue_labels=["A", "B"],
         values=values,
