@@ -53,17 +53,15 @@ class SockBarContainer:
 
 
 def sockbar(
-    x: object | None = None,
-    height: object | None = None,
+    data: object,
+    label: object | None = None,
     *,
-    data: object | None = None,
-    hue: object | None = None,
     texture: SockTextureSpec | None = None,
     hue_textures: Mapping[object, SockTextureSpec] | Sequence[SockTextureSpec] | None = None,
     ax: Axes | None = None,
     legend: bool = True,
     legend_kwargs: Mapping[str, object] | None = None,
-    hue_inner_gap: HueInnerGap = 14,
+    hue_inner_gap: HueInnerGap = "auto",
     group_gap: int = 80,
     odd_single: OddSingle = "center",
     seed: int | None = None,
@@ -71,16 +69,18 @@ def sockbar(
     """Draw a ZettaiPlot sock bar chart on Matplotlib axes.
 
     Args:
-        x: Category values or a column name resolved against ``data``.
-        height: Numeric values or a column name resolved against ``data``.
-        data: Optional mapping/DataFrame-like tabular object.
-        hue: Optional hue values or a column name resolved against ``data``.
+        data: Numeric chart data. Accepted forms are a one-dimensional sequence,
+            a NumPy array, a two-dimensional matrix, or a mapping where each key
+            is a hue/legend label and each value is that hue's category series.
+        label: Optional category labels. When omitted, integer labels are generated.
         texture: Default texture for non-hue charts or explicit shared texture.
         hue_textures: Optional mapping/sequence of textures for hue labels.
         ax: Existing axes. When omitted, a new figure and axes are created.
         legend: Whether to add a texture swatch legend for hue charts.
         legend_kwargs: Keyword arguments passed to ``Axes.legend``.
         hue_inner_gap: Pixel gap between hue legs; negative values overlap.
+            The default ``"auto"`` uses the packaged source-pair gap for
+            exactly two hue levels and falls back to 14px for other hue counts.
         group_gap: Pixel gap between category groups.
         odd_single: Unpaired single-leg position for odd non-hue category counts.
         seed: Random seed for single-leg asset side selection.
@@ -88,7 +88,7 @@ def sockbar(
     Returns:
         A container with axes, artists, asset ids, normalized values, and legend metadata.
     """
-    records = resolve_sockbar_records(x=x, height=height, hue=hue, data=data)
+    records = resolve_sockbar_records(data, label)
     normalized_values = normalize_values(records)
     library = load_default_assets()
     layout = compute_sockbar_layout(
@@ -226,7 +226,8 @@ def add_texture_legend(
     """Add a texture swatch legend to an axes."""
     handles = make_legend_handles(hue_labels, texture_by_hue)
     labels = list(hue_labels)
-    kwargs = dict(legend_kwargs or {})
+    kwargs = {"loc": "upper left", "bbox_to_anchor": (1.01, 1.0), "borderaxespad": 0.0}
+    kwargs.update(dict(legend_kwargs or {}))
     requested_ncol = kwargs.pop("ncol", kwargs.pop("ncols", 1))
     if not isinstance(requested_ncol, int):
         raise TypeError("legend ncol must be an integer")

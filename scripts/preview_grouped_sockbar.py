@@ -31,7 +31,7 @@ from zettaiplot.textures import (
 
 
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "assets" / "split" / "grouped_previews"
-type PreviewHueInnerGap = int | Literal["original"]
+type PreviewHueInnerGap = int | Literal["auto"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -72,19 +72,16 @@ def render_sockbar_preview(
     title: str,
     categories: list[str],
     hue_labels: list[str],
-    values: list[float],
+    values: list[list[float]],
     hue_inner_gap: PreviewHueInnerGap,
     group_gap: int,
     legend_ncol: int = 1,
 ) -> None:
     """Render one grouped preview image."""
-    x_values = [category for category in categories for _ in hue_labels]
-    hue_values = hue_labels * len(categories)
     fig, ax = plt.subplots(figsize=(12, 5.6))
     zp.sockbar(
-        x=x_values,
-        height=values,
-        hue=hue_values,
+        values_by_hue(hue_labels, values),
+        label=categories,
         ax=ax,
         hue_textures=hue_specs(len(hue_labels)),
         hue_inner_gap=hue_inner_gap,
@@ -106,16 +103,16 @@ def render_sockbar_preview(
 def render_two_hue_original_pair(output_dir: Path) -> None:
     """Render two-hue groups using original source-pair spacing."""
     categories = [f"day {index + 1}" for index in range(5)]
-    values: list[float] = []
+    values: list[list[float]] = []
     for index in range(len(categories)):
-        values.extend((0.36 + index * 0.09, 0.68 - index * 0.05))
+        values.append([0.36 + index * 0.09, 0.68 - index * 0.05])
     render_sockbar_preview(
         output_dir / "two_hue_original_pair_gap.png",
         title="2 hue items: original source-pair gaps, wider group spacing",
         categories=categories,
         hue_labels=["A", "B"],
         values=values,
-        hue_inner_gap="original",
+        hue_inner_gap="auto",
         group_gap=120,
         legend_ncol=2,
     )
@@ -135,14 +132,15 @@ def render_grouped_spacing_and_overlap(output_dir: Path) -> None:
     for ax, (title, hue_count, inner_gap, group_gap) in zip(axes.flat, variants, strict=True):
         categories = ["day 1", "day 2", "day 3"]
         hue_labels = [chr(ord("A") + index) for index in range(hue_count)]
-        values: list[float] = []
+        values: list[list[float]] = []
         for category_index in range(len(categories)):
+            row: list[float] = []
             for hue_index in range(hue_count):
-                values.append(0.32 + 0.12 * category_index + 0.1 * hue_index)
+                row.append(0.32 + 0.12 * category_index + 0.1 * hue_index)
+            values.append(row)
         zp.sockbar(
-            x=[category for category in categories for _ in hue_labels],
-            height=values,
-            hue=hue_labels * len(categories),
+            values_by_hue(hue_labels, values),
+            label=categories,
             ax=ax,
             hue_textures=hue_specs(hue_count),
             hue_inner_gap=inner_gap,
@@ -159,6 +157,17 @@ def render_grouped_spacing_and_overlap(output_dir: Path) -> None:
     fig.tight_layout()
     fig.savefig(output_dir / "hue_spacing_and_overlap_variants.png", dpi=150)
     plt.close(fig)
+
+
+def values_by_hue(
+    hue_labels: list[str],
+    rows: list[list[float]],
+) -> dict[str, list[float]]:
+    """Convert row-major preview values into sockbar's mapping input."""
+    return {
+        hue_label: [row[hue_index] for row in rows]
+        for hue_index, hue_label in enumerate(hue_labels)
+    }
 
 
 def main() -> None:

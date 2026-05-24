@@ -7,9 +7,9 @@ from collections.abc import Mapping, Sequence
 
 import numpy as np
 from matplotlib.artist import Artist
-from matplotlib.image import BboxImage
 from matplotlib.legend_handler import HandlerBase
-from matplotlib.transforms import Bbox, Transform
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
+from matplotlib.transforms import Transform
 from PIL import Image
 
 from zettaiplot.textures import SockTextureSpec, render_sock_texture
@@ -44,16 +44,21 @@ class HandlerTextureSwatch(HandlerBase):
         del legend, fontsize
         if not isinstance(orig_handle, TextureLegendHandle):
             raise TypeError("HandlerTextureSwatch requires TextureLegendHandle")
-        bbox = Bbox.from_bounds(xdescent, ydescent, width, height)
-        image = BboxImage(bbox, interpolation="bilinear")
-        image.set_data(np.asarray(orig_handle.image.convert("RGBA")))
-        image.set_transform(trans)
-        return [image]
+        image = OffsetImage(np.asarray(orig_handle.image.convert("RGBA")), zoom=height / 34)
+        box = AnnotationBbox(
+            image,
+            (xdescent + width / 2, ydescent + height / 2),
+            xycoords=trans,
+            boxcoords=trans,
+            frameon=False,
+            pad=0.0,
+        )
+        return [box]
 
 
 def make_texture_swatch(spec: SockTextureSpec, width: int = 96, height: int = 34) -> Image.Image:
     """Render a small rectangular texture sample for legends."""
-    leg = Image.new("RGBA", (width, height), (236, 188, 164, 255))
+    leg = Image.new("RGBA", (width, height), (253, 234, 228, 255))
     pixels = list(leg.get_flattened_data())
     shaded: list[tuple[int, int, int, int]] = []
     center = (width - 1) / 2

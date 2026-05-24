@@ -15,9 +15,13 @@
 
 ---
 
-## 样品示例（灵感来源）
+## 灵感来源
 
-![figure样品](./sample.jpg)
+![](./assets/sample.jpg)
+
+## 文档
+
+* [API 接口文档](./docs/api.md)
 
 ## 📋 需求与纹理处理方案总结
 
@@ -86,7 +90,7 @@
 
 * `src/zettaiplot/assets.py`：打包资产 manifest、腿部 PNG 的加载。
 * `src/zettaiplot/textures/`：纹理 spec、颜色、mask、几何、blend、renderer 与 preset。
-* `src/zettaiplot/data.py`：list / NumPy / mapping / DataFrame-like 输入归一化。
+* `src/zettaiplot/data.py`：外部 `data` / `label` 宽输入解析，并统一转为内部 `SockBarRecord` 长表记录。
 * `src/zettaiplot/layout.py`：类别、hue、奇数单腿、组间距与重叠布局。
 * `src/zettaiplot/artists.py`：`draw_sock_leg(...)` 中层绘制接口。
 * `src/zettaiplot/legend.py`：纹理矩形 swatch legend。
@@ -98,17 +102,15 @@
 import zettaiplot as zp
 
 container = zp.sockbar(
-    x=None,
-    height=None,
+    data,
+    label=None,
     *,
-    data=None,
-    hue=None,
     texture=None,
     hue_textures=None,
     ax=None,
     legend=True,
     legend_kwargs=None,
-    hue_inner_gap=14,
+    hue_inner_gap="auto",
     group_gap=80,
     odd_single="center",
     seed=None,
@@ -117,23 +119,27 @@ container = zp.sockbar(
 
 行为约定：
 
-* `x`、`height`、`hue` 可以是数组式输入，也可以是 `data` 中的列名；`data` 通过 duck typing 支持 mapping / DataFrame-like 对象，不强制依赖 pandas。
+* 对外 API 采用“宽进严出”范式：用户只传 `data` 与可选 `label`，解析后立即统一为内部 `SockBarRecord(category_label, hue_label, value)` 长表记录，后续布局与绘制层只消费这一种内部数据类型。
+* `data=[1, 2, 3]` 或 `np.array([100, 150, 200])` 表示单系列数据；不传 `label` 时自动生成类别标签 `["0", "1", "2"]`，传入 `label=["第一天", "第二天", "第三天"]` 时使用自定义类别名。
+* `data={"甲": [100, 150, 200], "乙": [80, 120, 160]}` 表示 grouped/hue 数据，mapping key 是图例项，value 是该图例项在各类别上的数值；`label` 仍表示类别组名称。
+* 二维矩阵也可表示 grouped/hue 数据：每一行是一个类别组，每一列是一个自动编号的 hue 项；若需要可读图例名，推荐使用 mapping 输入。
 * `ax=None` 时自动创建 Matplotlib figure/axes；传入已有 `ax` 时直接绘制到该 axes。
-* 数值映射为袜子覆盖比例：当前 v1 使用正值最大值归一化到 `[0, 1]`，腿部总高度始终保持视觉固定。
+* 数值映射为袜子覆盖比例：当前 v1 使用正值最大值归一化到最高 `0.8` 覆盖率，腿部总高度始终保持视觉固定，避免最大值直接顶满造成观感拥挤。全部数值为 0 时不报错，所有袜高归一化为 0。
 * 返回 `SockBarContainer`，包含 `ax`、`image_artists`、`asset_ids`、原始值、归一化值、legend handles/labels、布局 placements 与实际 legend 列数。
 * 中低层接口保留：`draw_sock_leg(ax, leg, *, x, value, scale=1.0, texture=...)` 与 `render_sock_texture(leg, spec, coverage_ratio)`。
 
 ### 4.1 grouped / hue 布局语义
 
-* 默认 grouped 布局采用 `hue_inner_gap=14`、`group_gap=80`。
+* 默认 grouped 布局采用 `hue_inner_gap="auto"`、`group_gap=80`。
 * `hue_inner_gap >= 0` 表示同类别组内相邻 hue 腿之间的可见像素间距。
 * `hue_inner_gap < 0` 表示相邻 hue 腿重叠 `abs(hue_inner_gap)` 像素，不再另设 overlap 参数。
 * `group_gap` 控制类别组之间的像素间距。
-* `hue_inner_gap="original"` 仅允许在 2 个 hue 的布局中使用，表示使用素材 manifest 中记录的原始 pair gap。
+* `hue_inner_gap="auto"` 表示自动间距：当 hue 数量为 2 时使用素材 manifest 中记录的原始 pair gap；当 hue 数量不是 2 时使用 14px。旧的 `"original"` 字面量不再作为公开参数支持。
 * 无 hue 且类别数为奇数时，`odd_single` 支持 `left`、`center`、`right`，默认 `center`。
 
 ### 4.2 图例行为
 
 * hue 图例使用小块矩形纹理 swatch，而不是 `A/B/C` 文本代理。
+* 图例 swatch 会使用人工浅肤色底色 `#FDEAE4` 作为纹理底衬，以减少 sheer、条纹等材质在图例中偏暗的问题。
 * `legend_kwargs` 透传给 `ax.legend`，支持 `loc`、`bbox_to_anchor`、`frameon`、字号等 Matplotlib 常用参数。
 * `ncol` 特殊语义：默认 `1`；正数表示行优先，每行项目数；负数表示列优先，绝对值为每列项目数，内部会重排 handles/labels 后交给 Matplotlib；`ncol=0` 无效。

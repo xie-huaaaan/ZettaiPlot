@@ -12,7 +12,7 @@ from zettaiplot.data import SockBarRecord, unique_in_order
 
 
 type OddSingle = Literal["left", "center", "right"]
-type HueInnerGap = int | Literal["original"]
+type HueInnerGap = int | Literal["auto"]
 
 
 @dataclass(frozen=True)
@@ -68,7 +68,7 @@ def compute_sockbar_layout(
     normalized_values: Sequence[float],
     library: LegAssetLibrary,
     *,
-    hue_inner_gap: HueInnerGap = 14,
+    hue_inner_gap: HueInnerGap = "auto",
     group_gap: int = 80,
     odd_single: OddSingle = "center",
     seed: int | None = None,
@@ -199,12 +199,12 @@ def relative_hue_group(
     pair = library.pairs[pair_ids[category_index % len(pair_ids)]]
     assets = select_hue_assets(records, hue_labels, library, pair.pair_id)
 
-    if hue_inner_gap == "original":
-        if len(hue_labels) != 2:
-            raise ValueError('hue_inner_gap="original" requires exactly 2 hue labels')
-        inner_gap = pair.original_pair_gap
-    else:
+    if hue_inner_gap == "auto":
+        inner_gap = pair.original_pair_gap if len(hue_labels) == 2 else 14
+    elif isinstance(hue_inner_gap, int):
         inner_gap = hue_inner_gap
+    else:
+        raise ValueError('hue_inner_gap must be "auto" or an integer')
 
     total_width = sum(asset.width for asset in assets)
     total_width += inner_gap * max(0, len(assets) - 1)
