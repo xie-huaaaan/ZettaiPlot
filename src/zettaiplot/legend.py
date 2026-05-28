@@ -45,7 +45,9 @@ class HandlerTextureSwatch(HandlerBase):
         del legend, fontsize
         if not isinstance(orig_handle, TextureLegendHandle):
             raise TypeError("HandlerTextureSwatch requires TextureLegendHandle")
-        image = OffsetImage(np.asarray(orig_handle.image.convert("RGBA")), zoom=height / 34)
+        image = OffsetImage(
+            np.asarray(orig_handle.image.convert("RGBA")), zoom=height / 34
+        )
         box = AnnotationBbox(
             image,
             (xdescent + width / 2, ydescent + height / 2),
@@ -57,7 +59,9 @@ class HandlerTextureSwatch(HandlerBase):
         return [box]
 
 
-def make_texture_swatch(spec: SockTextureSpec, width: int = 96, height: int = 34) -> Image.Image:
+def make_texture_swatch(
+    spec: SockTextureSpec, width: int = 96, height: int = 34
+) -> Image.Image:
     """Render a small rectangular texture sample for legends."""
     leg = Image.new("RGBA", (width, height), (253, 234, 228, 255))
     pixels = flattened_pixels(leg)

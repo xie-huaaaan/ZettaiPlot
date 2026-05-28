@@ -105,7 +105,8 @@ def compute_sockbar_layout(
     category_placements: list[CategoryPlacement] = []
     cursor = 0.0
     value_by_record = {
-        record.index: normalized_values[position] for position, record in enumerate(records)
+        record.index: normalized_values[position]
+        for position, record in enumerate(records)
     }
 
     for group_index, (category_label, relative_group) in enumerate(
@@ -179,7 +180,9 @@ def group_records_by_category(
         ]
         if hue_labels:
             category_records.sort(
-                key=lambda record: hue_order.get(record.hue_label or "", len(hue_order)),
+                key=lambda record: hue_order.get(
+                    record.hue_label or "", len(hue_order)
+                ),
             )
         grouped.append(category_records)
     return grouped
@@ -263,7 +266,9 @@ def relative_single_groups(
         if category_index == single_index:
             random_pair = library.pairs[pair_ids[rng.randrange(len(pair_ids))]]
             use_left = rng.choice((True, False))
-            asset_id = random_pair.left_asset_id if use_left else random_pair.right_asset_id
+            asset_id = (
+                random_pair.left_asset_id if use_left else random_pair.right_asset_id
+            )
             asset = library.assets[asset_id]
             hue_index = 0 if asset.side == "l" else 1
         else:
@@ -308,6 +313,10 @@ def group_bounds(relative_group: Sequence[RelativeLeg]) -> tuple[float, float]:
     """Return the horizontal bounds of a relative group."""
     if not relative_group:
         return 0.0, 0.0
-    left = min(relative.center_x - relative.asset.width / 2 for relative in relative_group)
-    right = max(relative.center_x + relative.asset.width / 2 for relative in relative_group)
+    left = min(
+        relative.center_x - relative.asset.width / 2 for relative in relative_group
+    )
+    right = max(
+        relative.center_x + relative.asset.width / 2 for relative in relative_group
+    )
     return left, right

@@ -22,7 +22,11 @@ def test_sockbar_accepts_list_data_and_creates_axes() -> None:
     container = zp.sockbar([1, 2, 4], seed=1)
 
     assert len(container.image_artists) == 3
-    assert [placement.category_label for placement in container.placements] == ["0", "1", "2"]
+    assert [placement.category_label for placement in container.placements] == [
+        "0",
+        "1",
+        "2",
+    ]
     assert container.normalized_values == [0.2, 0.4, 0.8]
     assert container.ax is not None
     plt.close("all")
@@ -48,7 +52,10 @@ def test_sockbar_accepts_numpy_data_and_existing_axes() -> None:
 
     assert container.ax is ax
     assert len(container.image_artists) == 2
-    assert [placement.category_label for placement in container.placements] == ["a", "b"]
+    assert [placement.category_label for placement in container.placements] == [
+        "a",
+        "b",
+    ]
     plt.close("all")
 
 
@@ -106,7 +113,9 @@ def test_resolve_sockbar_records_is_strict_internal_long_form() -> None:
         label=["x", "y"],
     )
 
-    assert [(record.category_label, record.hue_label, record.value) for record in records] == [
+    assert [
+        (record.category_label, record.hue_label, record.value) for record in records
+    ] == [
         ("x", "A", 1.0),
         ("x", "B", 2.0),
         ("y", "A", 3.0),
@@ -132,11 +141,17 @@ def test_auto_gap_uses_original_gap_for_two_hues_and_default_for_more() -> None:
     """Auto hue spacing uses original pair gaps only for two hue levels."""
     two_auto = zp.sockbar({"A": [1], "B": [2]}, hue_inner_gap="auto", legend=False)
     two_default = zp.sockbar({"A": [1], "B": [2]}, hue_inner_gap=14, legend=False)
-    three_auto = zp.sockbar({"A": [1], "B": [2], "C": [3]}, hue_inner_gap="auto", legend=False)
-    three_default = zp.sockbar({"A": [1], "B": [2], "C": [3]}, hue_inner_gap=14, legend=False)
+    three_auto = zp.sockbar(
+        {"A": [1], "B": [2], "C": [3]}, hue_inner_gap="auto", legend=False
+    )
+    three_default = zp.sockbar(
+        {"A": [1], "B": [2], "C": [3]}, hue_inner_gap=14, legend=False
+    )
 
     def center_delta(container: zp.SockBarContainer, left: int, right: int) -> float:
-        return abs(container.placements[right].center_x - container.placements[left].center_x)
+        return abs(
+            container.placements[right].center_x - container.placements[left].center_x
+        )
 
     assert center_delta(two_auto, 0, 1) != center_delta(two_default, 0, 1)
     assert center_delta(three_auto, 0, 1) == center_delta(three_default, 0, 1)

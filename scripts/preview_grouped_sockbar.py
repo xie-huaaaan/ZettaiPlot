@@ -129,7 +129,9 @@ def render_grouped_spacing_and_overlap(output_dir: Path) -> None:
         ("overlap 4 legs: in -34, out 112", 4, -34, 112),
         ("overlap 5 legs: in -50, out 112", 5, -50, 112),
     )
-    for ax, (title, hue_count, inner_gap, group_gap) in zip(axes.flat, variants, strict=True):
+    for ax, (title, hue_count, inner_gap, group_gap) in zip(
+        axes.flat, variants, strict=True
+    ):
         categories = ["day 1", "day 2", "day 3"]
         hue_labels = [chr(ord("A") + index) for index in range(hue_count)]
         values: list[list[float]] = []

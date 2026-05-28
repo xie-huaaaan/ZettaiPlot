@@ -21,7 +21,9 @@ class SockBarRecord:
     hue_label: str | None
 
 
-def resolve_sockbar_records(data: object, label: object | None = None) -> list[SockBarRecord]:
+def resolve_sockbar_records(
+    data: object, label: object | None = None
+) -> list[SockBarRecord]:
     """Resolve public wide-form sockbar inputs into internal records.
 
     Args:
@@ -71,13 +73,13 @@ def mapping_columns(value: object) -> list[tuple[str, list[float]]] | None:
         return None
     columns: list[tuple[str, list[float]]] = []
     expected_length: int | None = None
-    for key, raw_column in value.items():
-        column = [coerce_float(item) for item in object_list(raw_column)]
+    for key, raw_column in value.items():  # pyright: ignore[reportUnknownVariableType]
+        column = [coerce_float(item) for item in object_list(raw_column)]  # pyright: ignore[reportUnknownArgumentType]
         if expected_length is None:
             expected_length = len(column)
         elif len(column) != expected_length:
             raise ValueError("all data series must have the same length")
-        columns.append((str(key), column))
+        columns.append((str(key), column))  # pyright: ignore[reportUnknownArgumentType]
     if not columns or expected_length == 0:
         raise ValueError("data mapping must contain non-empty series")
     return columns
@@ -143,17 +145,21 @@ def object_list(value: object) -> list[object]:
     if isinstance(value, str | bytes):
         return [value]
     if isinstance(value, np.ndarray):
-        return [item.item() if hasattr(item, "item") else item for item in value.reshape(-1)]
+        return [
+            item.item() if hasattr(item, "item") else item for item in value.reshape(-1)
+        ]
     if isinstance(value, Sequence):
-        return list(value)
+        return list(value)  # pyright: ignore[reportUnknownArgumentType]
     if isinstance(value, Mapping):
-        return list(value.values())
+        return list(value.values())  # pyright: ignore[reportUnknownArgumentType]
     if isinstance(value, Iterable):
-        return list(value)
+        return list(value)  # pyright: ignore[reportUnknownArgumentType]
     array = np.asarray(value, dtype=object)
     if array.ndim == 0:
         return [array.item()]
-    return [item.item() if hasattr(item, "item") else item for item in array.reshape(-1)]
+    return [
+        item.item() if hasattr(item, "item") else item for item in array.reshape(-1)
+    ]
 
 
 def coerce_float(value: object) -> float:
@@ -164,15 +170,20 @@ def coerce_float(value: object) -> float:
         except ValueError as exc:
             raise TypeError("data values must be numeric") from exc
     if isinstance(value, int | float | np.number):
-        return float(value)
+        return float(value)  # pyright: ignore[reportUnknownArgumentType]
     raise TypeError("data values must be numeric")
 
 
 def normalize_values(records: Sequence[SockBarRecord]) -> list[float]:
     """Normalize record values into sock coverage ratios."""
-    positive_max = max((record.value for record in records if record.value > 0), default=1.0)
+    positive_max = max(
+        (record.value for record in records if record.value > 0), default=1.0
+    )
     return [
-        min(MAX_COVERAGE_RATIO, max(0.0, record.value / positive_max * MAX_COVERAGE_RATIO))
+        min(
+            MAX_COVERAGE_RATIO,
+            max(0.0, record.value / positive_max * MAX_COVERAGE_RATIO),
+        )
         for record in records
     ]
 

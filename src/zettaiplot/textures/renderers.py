@@ -253,7 +253,11 @@ def render_polka_dot(
         offset = spacing / 2 if spec.staggered and row % 2 else 0
         local_x = periodic_distance(virtual_x + offset, spacing)
         local_y = periodic_distance(y - top_y, spacing)
-        color = primary if local_x * local_x + local_y * local_y <= radius * radius else secondary
+        color = (
+            primary
+            if local_x * local_x + local_y * local_y <= radius * radius
+            else secondary
+        )
         return multiply_tinted(source, color, 0.78)
 
     return apply_pixels(image, mask, profiles, pixel)
@@ -281,7 +285,9 @@ def render_lace_top(
             mask,
             profiles,
             top_y,
-            SheerSpec(color="black", denier=32, edge_enrichment=0.25, grain_strength=0.02),
+            SheerSpec(
+                color="black", denier=32, edge_enrichment=0.25, grain_strength=0.02
+            ),
         )
 
     lace_height = max(8, spec.lace_height)

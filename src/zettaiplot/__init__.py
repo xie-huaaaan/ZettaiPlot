@@ -1,7 +1,13 @@
 """ZettaiPlot public package."""
 
 from zettaiplot.artists import draw_sock_leg
-from zettaiplot.assets import LegAsset, LegAssetLibrary, SourcePair, load_default_assets, open_leg
+from zettaiplot.assets import (
+    LegAsset,
+    LegAssetLibrary,
+    SourcePair,
+    load_default_assets,
+    open_leg,
+)
 from zettaiplot.bar import SockBarContainer, sockbar
 from zettaiplot.textures import (
     ColorLike,

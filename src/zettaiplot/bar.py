@@ -58,7 +58,9 @@ def sockbar(
     label: object | None = None,
     *,
     texture: SockTextureSpec | None = None,
-    hue_textures: Mapping[object, SockTextureSpec] | Sequence[SockTextureSpec] | None = None,
+    hue_textures: Mapping[object, SockTextureSpec]
+    | Sequence[SockTextureSpec]
+    | None = None,
     ax: Axes | None = None,
     legend: bool = True,
     legend_kwargs: Mapping[str, object] | None = None,
@@ -230,9 +232,13 @@ def add_texture_legend(
     """Add a texture swatch legend to an axes."""
     handles = make_legend_handles(hue_labels, texture_by_hue)
     labels = list(hue_labels)
-    kwargs = {"loc": "upper left", "bbox_to_anchor": (1.01, 1.0), "borderaxespad": 0.0}
+    kwargs: dict[str, object] = {
+        "loc": "upper left",
+        "bbox_to_anchor": (1.01, 1.0),
+        "borderaxespad": 0.0,
+    }
     kwargs.update(dict(legend_kwargs or {}))
-    requested_ncol = kwargs.pop("ncol", kwargs.pop("ncols", 1))
+    requested_ncol = kwargs.pop("ncol", kwargs.pop("ncols", 1))  # pyright: ignore[reportUnknownVariableType]
     if not isinstance(requested_ncol, int):
         raise TypeError("legend ncol must be an integer")
     ordered_handles, ordered_labels, ncol = normalize_legend_ncol(
@@ -245,6 +251,6 @@ def add_texture_legend(
         ordered_handles,
         ordered_labels,
         handler_map={TextureLegendHandle: HandlerTextureSwatch()},
-        **kwargs,
+        **kwargs,  # pyright: ignore[reportUnknownArgumentType]
     )
     return ordered_handles, ordered_labels, ncol

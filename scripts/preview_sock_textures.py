@@ -111,10 +111,10 @@ def pair_asset_paths(
     if not isinstance(raw_pairs, list) or not isinstance(raw_assets, list):
         raise TypeError("manifest must contain source_pairs and assets lists")
 
-    pair = next(
-        (
+    pair = next(  # pyright: ignore[reportUnknownVariableType]
+        (  # pyright: ignore[reportUnknownArgumentType]
             candidate
-            for candidate in raw_pairs
+            for candidate in raw_pairs  # pyright: ignore[reportUnknownVariableType]
             if isinstance(candidate, dict) and candidate.get("pair_id") == pair_id
         ),
         None,
@@ -123,16 +123,16 @@ def pair_asset_paths(
         raise ValueError(f"pair_id {pair_id} was not found in manifest")
 
     paths_by_id: dict[str, Path] = {}
-    for raw_asset in raw_assets:
+    for raw_asset in raw_assets:  # pyright: ignore[reportUnknownVariableType]
         if not isinstance(raw_asset, dict):
             continue
-        asset_id = raw_asset.get("asset_id")
-        path_value = raw_asset.get("path")
+        asset_id = raw_asset.get("asset_id")  # pyright: ignore[reportUnknownVariableType]
+        path_value = raw_asset.get("path")  # pyright: ignore[reportUnknownVariableType]
         if isinstance(asset_id, str) and isinstance(path_value, str):
             paths_by_id[asset_id] = split_dir / path_value
 
-    left_id = pair.get("left_asset_id")
-    right_id = pair.get("right_asset_id")
+    left_id = pair.get("left_asset_id")  # pyright: ignore[reportUnknownVariableType]
+    right_id = pair.get("right_asset_id")  # pyright: ignore[reportUnknownVariableType]
     if not isinstance(left_id, str) or not isinstance(right_id, str):
         raise TypeError("source pair must contain left_asset_id and right_asset_id")
     return paths_by_id[left_id], paths_by_id[right_id]
@@ -170,7 +170,9 @@ def texture_previews() -> tuple[TexturePreview, ...]:
                 PreviewParameter("color", "enum", colors),
                 PreviewParameter("top_opacity", "number", floats(0.25, 0.85)),
                 PreviewParameter("bottom_opacity", "number", floats(0.08, 0.6)),
-                PreviewParameter("gradient_curve", "enum", ("linear", "ease_in", "ease_out")),
+                PreviewParameter(
+                    "gradient_curve", "enum", ("linear", "ease_in", "ease_out")
+                ),
             ),
         ),
         TexturePreview(
@@ -249,7 +251,9 @@ def make_spec_sample(
 ) -> SockTextureSpec:
     """Return a spec with one preview parameter changed."""
     if parameter.name == "palette" and isinstance(value, str):
-        return replace(base_spec, palette=PaletteSpec(preset=cast(PalettePreset, value)))
+        return replace(
+            base_spec, palette=PaletteSpec(preset=cast(PalettePreset, value))
+        )
     return replace(base_spec, **{parameter.name: value})
 
 

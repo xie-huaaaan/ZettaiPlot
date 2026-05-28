@@ -84,12 +84,12 @@ def load_assets(split_dir: Path, manifest: dict[str, object]) -> list[LegAsset]:
         raise TypeError("manifest assets must be a list")
 
     assets: list[LegAsset] = []
-    for raw_asset in raw_assets:
+    for raw_asset in raw_assets:  # pyright: ignore[reportUnknownVariableType]
         if not isinstance(raw_asset, dict):
             continue
-        path_value = raw_asset.get("path")
-        asset_id = raw_asset.get("asset_id")
-        side = raw_asset.get("side")
+        path_value = raw_asset.get("path")  # pyright: ignore[reportUnknownVariableType]
+        asset_id = raw_asset.get("asset_id")  # pyright: ignore[reportUnknownVariableType]
+        side = raw_asset.get("side")  # pyright: ignore[reportUnknownVariableType]
         if not isinstance(path_value, str):
             raise TypeError("asset path must be a string")
         if not isinstance(asset_id, str):
@@ -102,7 +102,7 @@ def load_assets(split_dir: Path, manifest: dict[str, object]) -> list[LegAsset]:
         assets.append(
             LegAsset(
                 asset_id=asset_id,
-                side=side,
+                side=side,  # pyright: ignore[reportUnknownArgumentType]
                 path=asset_path,
                 width=width,
                 height=height,
@@ -124,7 +124,9 @@ def odd_single_index(count: int, policy: OddSingle) -> int | None:
     raise ValueError(f"Unsupported odd policy: {policy}")
 
 
-def choose_asset(rng: random.Random, assets_by_side: dict[str, list[LegAsset]], side: str) -> LegAsset:
+def choose_asset(
+    rng: random.Random, assets_by_side: dict[str, list[LegAsset]], side: str
+) -> LegAsset:
     """Choose a leg asset for a side."""
     return rng.choice(assets_by_side[side])
 

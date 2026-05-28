@@ -25,7 +25,9 @@ def test_render_sock_texture_preserves_size_and_alpha() -> None:
     rendered = render_sock_texture(leg, SheerSpec(color="black"), coverage_ratio=0.72)
 
     assert rendered.size == leg.size
-    assert flattened_pixels(rendered.getchannel("A")) == flattened_pixels(leg.getchannel("A"))
+    assert flattened_pixels(rendered.getchannel("A")) == flattened_pixels(
+        leg.getchannel("A")
+    )
 
 
 def test_custom_rgb_and_palette_specs_render() -> None:

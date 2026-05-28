@@ -66,34 +66,34 @@ def load_asset_library_from_split(
         raise TypeError("manifest must contain assets and source_pairs lists")
 
     assets: dict[str, LegAsset] = {}
-    for raw_asset in raw_assets:
+    for raw_asset in raw_assets:  # pyright: ignore[reportUnknownVariableType]
         if not isinstance(raw_asset, dict):
             continue
-        asset_id = require_str(raw_asset, "asset_id")
-        relative_path = require_str(raw_asset, "path")
+        asset_id = require_str(raw_asset, "asset_id")  # pyright: ignore[reportUnknownArgumentType]
+        relative_path = require_str(raw_asset, "path")  # pyright: ignore[reportUnknownArgumentType]
         image_resource = split_root / relative_path
         with image_resource.open("rb") as image_file, Image.open(image_file) as image:
             width, height = image.size
         assets[asset_id] = LegAsset(
             asset_id=asset_id,
-            side=require_str(raw_asset, "side"),
+            side=require_str(raw_asset, "side"),  # pyright: ignore[reportUnknownArgumentType]
             relative_path=relative_path,
             resource=image_resource,
-            source_pair_id=require_int(raw_asset, "source_pair_id"),
+            source_pair_id=require_int(raw_asset, "source_pair_id"),  # pyright: ignore[reportUnknownArgumentType]
             width=width,
             height=height,
         )
 
     pairs: dict[int, SourcePair] = {}
-    for raw_pair in raw_pairs:
+    for raw_pair in raw_pairs:  # pyright: ignore[reportUnknownVariableType]
         if not isinstance(raw_pair, dict):
             continue
-        pair_id = require_int(raw_pair, "pair_id")
+        pair_id = require_int(raw_pair, "pair_id")  # pyright: ignore[reportUnknownArgumentType]
         pairs[pair_id] = SourcePair(
             pair_id=pair_id,
-            left_asset_id=require_str(raw_pair, "left_asset_id"),
-            right_asset_id=require_str(raw_pair, "right_asset_id"),
-            original_pair_gap=require_int(raw_pair, "original_pair_gap"),
+            left_asset_id=require_str(raw_pair, "left_asset_id"),  # pyright: ignore[reportUnknownArgumentType]
+            right_asset_id=require_str(raw_pair, "right_asset_id"),  # pyright: ignore[reportUnknownArgumentType]
+            original_pair_gap=require_int(raw_pair, "original_pair_gap"),  # pyright: ignore[reportUnknownArgumentType]
         )
     return LegAssetLibrary(assets=assets, pairs=pairs)
 

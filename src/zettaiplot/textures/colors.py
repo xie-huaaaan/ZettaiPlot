@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from zettaiplot.textures.specs import ColorLike, ColorPreset, PaletteSpec, PalettePreset, RGB
+from zettaiplot.textures.specs import (
+    ColorLike,
+    ColorPreset,
+    PaletteSpec,
+    PalettePreset,
+    RGB,
+)
 
 
 COLOR_PRESETS: dict[ColorPreset, RGB] = {

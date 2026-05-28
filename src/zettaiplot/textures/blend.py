@@ -49,10 +49,10 @@ def luminance(color: RGBA) -> float:
 
 def rgba_tuple(value: object) -> RGBA:
     """Cast a Pillow RGBA pixel to a typed tuple."""
-    if not isinstance(value, tuple) or len(value) != 4:
+    if not isinstance(value, tuple) or len(value) != 4:  # pyright: ignore[reportUnknownArgumentType]
         raise TypeError("Expected RGBA pixel tuple")
-    red, green, blue, alpha = value
-    return (int(red), int(green), int(blue), int(alpha))
+    red, green, blue, alpha = value  # pyright: ignore[reportUnknownVariableType]
+    return (int(red), int(green), int(blue), int(alpha))  # pyright: ignore[reportUnknownArgumentType]
 
 
 def deterministic_noise(x: int, y: int) -> float:

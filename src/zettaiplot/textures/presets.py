@@ -14,7 +14,9 @@ from zettaiplot.textures.specs import (
 
 def sheer_black() -> SheerSpec:
     """Return a black sheer stocking preset."""
-    return SheerSpec(color="black", denier=36, edge_enrichment=0.35, grain_strength=0.05)
+    return SheerSpec(
+        color="black", denier=36, edge_enrichment=0.35, grain_strength=0.05
+    )
 
 
 def opaque_white() -> OpaqueSpec:
@@ -24,7 +26,9 @@ def opaque_white() -> OpaqueSpec:
 
 def school_stripes() -> HorizontalStripesSpec:
     """Return a blue-white school stripe preset."""
-    return HorizontalStripesSpec(palette=PaletteSpec(preset="school"), stripe_height=16, gap_height=12)
+    return HorizontalStripesSpec(
+        palette=PaletteSpec(preset="school"), stripe_height=16, gap_height=12
+    )
 
 
 def classic_fishnet() -> FishnetSpec:
@@ -34,4 +38,6 @@ def classic_fishnet() -> FishnetSpec:
 
 def lace_sheer_black() -> LaceTopSpec:
     """Return a black sheer lace-top preset."""
-    return LaceTopSpec(base_style="sheer", lace_height=46, motif_scale=14, lace_opacity=0.72)
+    return LaceTopSpec(
+        base_style="sheer", lace_height=46, motif_scale=14, lace_opacity=0.72
+    )

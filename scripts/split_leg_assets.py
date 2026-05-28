@@ -180,7 +180,9 @@ def split_assets(
     """Split all source rows and return the manifest data."""
     source_paths = sorted(assets_dir.glob(SOURCE_PATTERN))
     if not source_paths:
-        raise FileNotFoundError(f"No source images matched {assets_dir / SOURCE_PATTERN}")
+        raise FileNotFoundError(
+            f"No source images matched {assets_dir / SOURCE_PATTERN}"
+        )
 
     assets: list[dict[str, object]] = []
     source_pairs: list[dict[str, object]] = []
@@ -264,7 +266,7 @@ def split_assets(
             )
             pair_id += 1
 
-    diagnostics = {
+    diagnostics: dict[str, object] = {
         "total_legs": len(assets),
         "total_pairs": len(source_pairs),
         "area_threshold": area_threshold,
@@ -311,8 +313,8 @@ def asset_by_id(manifest: dict[str, object]) -> dict[str, dict[str, object]]:
     if not isinstance(assets, list):
         raise TypeError("manifest assets must be a list")
     return {
-        asset["asset_id"]: asset
-        for asset in assets
+        asset["asset_id"]: asset  # pyright: ignore[reportUnknownVariableType]
+        for asset in assets  # pyright: ignore[reportUnknownVariableType]
         if isinstance(asset, dict) and isinstance(asset.get("asset_id"), str)
     }
 
@@ -328,12 +330,12 @@ def make_contact_sheet(manifest: dict[str, object], output_dir: Path) -> None:
     cell_height = 250
     label_height = 26
     columns = 4
-    rows = math.ceil(len(pairs) / columns)
+    rows = math.ceil(len(pairs) / columns)  # pyright: ignore[reportUnknownArgumentType]
     sheet = Image.new("RGBA", (columns * cell_width, rows * cell_height), "white")
     draw = ImageDraw.Draw(sheet)
     font = ImageFont.load_default()
 
-    for index, pair in enumerate(pairs):
+    for index, pair in enumerate(pairs):  # pyright: ignore[reportUnknownVariableType,reportUnknownArgumentType]
         if not isinstance(pair, dict):
             continue
         row, column = divmod(index, columns)
@@ -343,7 +345,7 @@ def make_contact_sheet(manifest: dict[str, object], output_dir: Path) -> None:
             (origin_x, origin_y, origin_x + cell_width - 1, origin_y + cell_height - 1),
             outline=(220, 220, 220, 255),
         )
-        pair_id = pair["pair_id"]
+        pair_id = pair["pair_id"]  # pyright: ignore[reportUnknownVariableType]
         draw.text(
             (origin_x + 8, origin_y + 6),
             f"pair {pair_id} | {pair['source_file']}",
@@ -353,22 +355,24 @@ def make_contact_sheet(manifest: dict[str, object], output_dir: Path) -> None:
 
         for side_index, side in enumerate(("l", "r")):
             asset_key = "left_asset_id" if side == "l" else "right_asset_id"
-            asset_id = pair[asset_key]
+            asset_id = pair[asset_key]  # pyright: ignore[reportUnknownVariableType]
             asset = assets[asset_id]
-            leg_path = output_dir / str(asset["path"])
+            leg_path = output_dir / str(asset["path"])  # pyright: ignore[reportUnknownArgumentType]
             with Image.open(leg_path) as image:
                 leg = image.convert("RGBA")
             preview_height = cell_height - label_height - 18
             scale = preview_height / leg.height
             preview_width = max(1, round(leg.width * scale))
-            preview = leg.resize((preview_width, preview_height), Image.Resampling.LANCZOS)
+            preview = leg.resize(
+                (preview_width, preview_height), Image.Resampling.LANCZOS
+            )
             center_x = origin_x + (cell_width * (side_index + 1) // 3)
             paste_x = center_x - preview.width // 2
             paste_y = origin_y + label_height + 10
             sheet.alpha_composite(preview, (paste_x, paste_y))
             draw.text(
                 (center_x - 22, origin_y + cell_height - 18),
-                str(asset_id),
+                str(asset_id),  # pyright: ignore[reportUnknownArgumentType]
                 fill=(70, 70, 70, 255),
                 font=font,
             )
