@@ -7,4 +7,9 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv/
+
+# Agents settings and data
+.claude/
+.cursor/
+.agent/
