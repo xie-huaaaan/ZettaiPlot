@@ -155,12 +155,6 @@ src/zettaiplot/
 
 欢迎贡献。提交大型更改前请先开 issue 讨论方案。
 
-1. Fork 仓库
-2. 创建功能分支（`git checkout -b feat/my-feature`）
-3. 提交带有测试和类型注解的更改
-4. 确保 `pytest`、`pyright` 和 `ruff check` 全部通过
-5. 提交 Pull Request
-
 代码风格：使用 [Ruff](https://docs.astral.sh/ruff/) 进行格式化和代码检查，严格类型注解（Python 3.12+、PEP 695 泛型），Google 风格文档字符串。
 
 ## 许可证
