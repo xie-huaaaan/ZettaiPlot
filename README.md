@@ -155,12 +155,6 @@ src/zettaiplot/
 
 Contributions are welcome. Please open an issue before submitting a large change so we can discuss the approach.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/my-feature`)
-3. Make changes with tests and type annotations
-4. Ensure `pytest`, `pyright`, and `ruff check` all pass
-5. Open a pull request
-
 Code style: [Ruff](https://docs.astral.sh/ruff/) for formatting and linting, strict type annotations (Python 3.12+, PEP 695 generics), Google-style docstrings.
 
 ## License
