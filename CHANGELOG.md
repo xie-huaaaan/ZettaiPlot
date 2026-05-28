@@ -7,10 +7,17 @@ ZettaiPlot uses [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.1.2] - 2026-05-25
+
+### Changed
+- The minimum required runtime environment is fixed to Python `>=3.12`; the dependency lower bounds are adjusted to Matplotlib `>=3.8.0`, NumPy `>=1.26.0`, and Pillow `>=11.0.0`, to cover the earliest mainline versions that explicitly support Python 3.12.
+
+---
+
 ## [0.1.1] — 2026-05-24
 
 ### Added
-- README and API reference documentation (`docs/api.md`).
+- README and API reference documentation (English and Chinese).
 
 ---
 

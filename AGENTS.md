@@ -1,42 +1,54 @@
 # Agent Instructions for ZettaiPlot
 
 ## 1. Context & Tech Stack
-- **Language**: Python 3.12
+- **Language**: Python 3.12+ (Prioritize modern syntax)
 - **Package Manager**: `uv`
 - **Linter/Formatter**: `Ruff`
+- **Type Checker**: `Pyright` (Basic mode with strict rule add-ons)
 
 ## 2. Environment Commands
-- **Install**: `uv sync`
 - **Add Dependency**: `uv add <package>`
 - **Run Tests**: `uv run pytest`
-- **Linting**: `uv run ruff check --fix`
-- **Check Types**: `uv run pyright` (或 mypy)
+- **Lint & Format**: `uv run ruff check --fix` and `uv run ruff format`
+- **Type Check**: `uv run pyright`
 
-## 3. Coding Standards (Strict)
-### Typing (Python 3.12+)
-- **Generic Syntax**: 必须使用 PEP 695 语法。例如：`def get_first[T](items: list[T]) -> T: ...`
-- **No Any**: 非必要不使用 `Any`，如无法确定类型可以使用 `object` 或 `Protocol`。
-- **Type Aliases**: 优先使用 `type Name = str | int`。
+## 3. Coding Standards & Type Safety
 
-### Documentation
-- **Style**: 遵循 Google Python Style Guide。
-- **Docstrings**: 所有公共函数、类、模块必须包含 Docstrings。
-- **Comments**: 不要解释代码显而易见的功能，仅在逻辑复杂或涉及特殊业务规则时添加说明。
-- **Language**: Docstrings 使用 English ，其余注释使用中文。
-- **Algorithm Comments**: 凡涉及图形学计算（如圆柱体扭曲、边缘富集效应），必须在代码注释中明示数学公式的推导逻辑。
+### Typing & Static Analysis (Performance-First & Pragmatic)
+
+- **Trust with Autonomy**: We trust your capability to write clean Python 3.12. Do not over-engineer type definitions for purely internal, localized, or self-contained logic where the type is clear from the immediate context.
+- **Generic Syntax**: MUST use PEP 695 syntax. (e.g., `def get_first[T](items: list[T]) -> T: ...`)
+- **Type Aliases**: MUST use PEP 695 `type` statement. (e.g., `type Name = str | int`)
+- **No Implicit/Blanket Any**: Avoid explicit `Any` where possible. Use `object` or `Protocol` for structural typing.
+- **Strict Restrictions on `typing.cast`**: 
+  Do NOT abuse `typing.cast` to quiet the compiler. At runtime, `typing.cast` is a regular Python function call. **It MUST be completely avoided inside high-frequency loops or hot paths** (e.g., texture rendering, coordinate transformations), as its function-call overhead is unacceptable in performance-critical code.
+- **Zero-Overhead Policy for Hot Paths (Critical)**:
+  Inside high-frequency loops, rendering pipelines, or heavy math calculations, **execution speed takes absolute priority over static analysis satisfaction**.
+  - *No In-Loop Safety Checks*: Avoid placing runtime safety checks (such as `isinstance()`, `hasattr()`, or `assert`) *inside* hot loops, as they introduce severe dynamic overhead.
+  - *Hoist or Suppress*: Always attempt to hoist validations *before/outside* the loop. If validation cannot be cleanly hoisted and Pyright still complains, **you MUST favor static type suppression (`# pyright: ignore`) over introducing runtime safety checks**.
+- **Reasonable Type Suppression**: 
+  When Pyright emits a warning on a standard Python dynamic pattern (e.g., parsing complex JSON, dictionary unpacking, or inside utility tools in `scripts/`), and adding explicit typing would result in anti-patterns, excessive boilerplate, or runtime degradation:
+  - You are permitted to use local suppression: `# pyright: ignore[rule_name]`.
+  - Avoid blanket `# type: ignore`. Always target the specific rule and leave a brief comment if the reason isn't self-evident.
+
+### Documentation & Comments
+- **Style**: Strictly follow the Google Python Style Guide.
+- **Docstrings**: Required for all public modules, classes, and functions. 
+- **Algorithm Clarity**: For any graphics computing or coordinate transformations (e.g., cylinder warping, edge enrichment effects), you MUST provide the mathematical formulas and derivation logic within the inline Chinese comments.
+- **No Redundant Comments**: Do not explain *what* the code does if it is self-evident. Explain *why* it was designed that way or the underlying constraints.
 
 ## 4. Project Structure
-AI Agent 在操作文件时建议遵循以下结构，若需要增改应询问是否允许：
-- `src/ZettaiPlot/`: 源代码核心。
-  - `assets/`: 必要素材，将打包到库中
-- `tests/`: 测试文件，结构必须与 `src/` 保持 1:1 镜像。
-- `scripts/`: 临时维护脚本。
-- `assets/`: 原始/临时素材
+Do not alter the project topology without explicit confirmation. Follow this layout:
+- `src/zettaiplot/`: Core source code (Package name is lowercase per PEP 8).
+  - `assets/`: Built-in asset files packaged into the library.
+- `tests/`: Unit tests, mirroring the `src/zettaiplot/` structure 1:1.
+- `scripts/`: Offline utility, maintenance, and asset preview scripts.
+- `assets/`: Raw or temporary source assets (not packaged into distribution).
 
-## 5. While Planing
+## 5. Architectural Principle: Planning over Implementation
+When designing features or refactoring:
+- Prioritize **end-state effects**, **public APIs**, and **interface boundaries** over internal implementation mechanics.
+- Define what the system achieves and its external contract *before* writing the inner loop.
 
-在计划时，最重要的不是具体技术路径，而是规划好需要实现什么效果，最终构建出来是什么样的，对外接口是什么样的——这些比内部如何工作更重要。
-
-## 6. About the Project
-
-Please Read and update `project.md` in real time.
+## 6. Project Knowledge Synchronization
+- Read and update `project.md` in real-time as the project evolves to keep architectural context fresh.
