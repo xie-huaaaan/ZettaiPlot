@@ -16,7 +16,7 @@
 
 ### Typing & Static Analysis (Performance-First & Pragmatic)
 
-- **Trust with Autonomy**: We trust your capability to write clean Python 3.12. Do not over-engineer type definitions for purely internal, localized, or self-contained logic where the type is clear from the immediate context.
+- **Trust with Autonomy**: We trust your capability to write clean Python 3.12. Do not over-engineer type definitions for purely internal, localized, or self-contained logic where the type is clear from the immediate context, particularly for scripts in `scripts/`, `example/`, and similar not packaged or informal directories.
 - **Generic Syntax**: MUST use PEP 695 syntax. (e.g., `def get_first[T](items: list[T]) -> T: ...`)
 - **Type Aliases**: MUST use PEP 695 `type` statement. (e.g., `type Name = str | int`)
 - **No Implicit/Blanket Any**: Avoid explicit `Any` where possible. Use `object` or `Protocol` for structural typing.
@@ -25,7 +25,7 @@
 - **Zero-Overhead Policy for Hot Paths (Critical)**:
   Inside high-frequency loops, rendering pipelines, or heavy math calculations, **execution speed takes absolute priority over static analysis satisfaction**.
   - *No In-Loop Safety Checks*: Avoid placing runtime safety checks (such as `isinstance()`, `hasattr()`, or `assert`) *inside* hot loops, as they introduce severe dynamic overhead.
-  - *Hoist or Suppress*: Always attempt to hoist validations *before/outside* the loop. If validation cannot be cleanly hoisted and Pyright still complains, **you MUST favor static type suppression (`# pyright: ignore`) over introducing runtime safety checks**.
+  - *Hoist or Suppress*: Always attempt to boost the verification of performance loss to *before* or *outside* the loop. If validation cannot be cleanly hoisted and Pyright still complains, **you MUST favor static type suppression (`# pyright: ignore`) over introducing runtime safety checks**.
 - **Reasonable Type Suppression**: 
   When Pyright emits a warning on a standard Python dynamic pattern (e.g., parsing complex JSON, dictionary unpacking, or inside utility tools in `scripts/`), and adding explicit typing would result in anti-patterns, excessive boilerplate, or runtime degradation:
   - You are permitted to use local suppression: `# pyright: ignore[rule_name]`.
